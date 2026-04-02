@@ -1,0 +1,296 @@
+{
+  "name": "Voice To Text",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        160
+      ],
+      "id": "48af2d6d-e602-47eb-adaa-680361690ec5",
+      "name": "Input Trigger",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "YOUR_TELEGRAM_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "25c80d96-34da-4a7a-a21f-762125e8fa3d",
+      "name": "Get Voice",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "YOUR_TELEGRAM_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot{{ $env.TELEGRAM_BOT_TOKEN }}/{{ $json.result.file_path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        176,
+        160
+      ],
+      "id": "c3b05587-b563-4138-8604-1de385334968",
+      "name": "Fetch File"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Receive input items\nfor (const item of $input.all()) {\n  // Check for binary data named 'data'\n  if (item.binary && item.binary.data) {\n    // Rename file and change extension\n    item.binary.data.fileName = 'voice.mp3';\n    // Change MIME type to mpeg\n    item.binary.data.mimeType = 'audio/mpeg';\n    item.binary.data.fileExtension = 'mp3';\n  }\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        160
+      ],
+      "id": "ee4f8cb3-65bb-4e35-9824-3b02fb5a73f9",
+      "name": "Change Format File"
+    },
+    {
+      "parameters": {
+        "content": "\nThis workflow created for converting voice to text from Telegram and send it to Telegram.",
+        "height": 80,
+        "width": 624,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "da0c7424-8b65-498f-8b5a-121acd4893f9",
+      "name": "Caption"
+    },
+    {
+      "parameters": {
+        "content": "Input Section:\nConnect Workflow To Telegram",
+        "height": 240,
+        "width": 432,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        96
+      ],
+      "id": "1c6c5de8-f12a-45a6-b143-b114acff93f2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Cleaning Data:\nGet File and Convert Extention For Groq AI",
+        "height": 240,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        96
+      ],
+      "id": "07998de8-d723-41df-b253-8bbc64de17c8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "AI Engine With Groq:\nTranscript Voice To Text and Send",
+        "height": 240,
+        "width": 528,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        96
+      ],
+      "id": "230ede7f-0a1c-4c33-acfc-7939245b41fa",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        560,
+        160
+      ],
+      "id": "e29bb993-03dd-43b4-ab6e-25f114df6523",
+      "name": "Groq AI Engine",
+      "credentials": {
+        "groqApi": {
+          "id": "",
+          "name": "YOUR_GROQ_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Input Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.chunk }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        160
+      ],
+      "id": "92f8bb1e-b77f-456a-87e9-c6d135973b7d",
+      "name": "Output",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "YOUR_TELEGRAM_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Split long transcription text into Telegram-safe chunks (max 4000 chars)\nconst text = items[0].json.text;\nconst maxLength = 4000;\nconst parts = [];\n\nfor (let i = 0; i < text.length; i += maxLength) {\n    parts.push({ json: { chunk: text.substring(i, i + maxLength) } });\n}\n\nreturn parts;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        160
+      ],
+      "id": "a66f7325-f7b7-41d4-84be-1019844ffa16",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice": {
+      "main": [
+        [
+          {
+            "node": "Fetch File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch File": {
+      "main": [
+        [
+          {
+            "node": "Change Format File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Change Format File": {
+      "main": [
+        [
+          {
+            "node": "Groq AI Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq AI Engine": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "REPLACE_WITH_NEW_VERSION_ID",
+  "meta": {
+    "instanceId": "REPLACE_WITH_YOUR_INSTANCE_ID"
+  },
+  "tags": []
+}
