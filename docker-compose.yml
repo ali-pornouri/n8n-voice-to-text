@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_voice_to_text
+    restart: always
+    expose:
+      - "5678"
+    environment:
+      - N8N_HOST=${NGROK_DOMAIN}
+      - WEBHOOK_URL=https://${NGROK_DOMAIN}/
+      - N8N_PROTOCOL=https
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true
+      - N8N_USER_MANAGEMENT_DISABLED=false
+      - N8N_LOG_LEVEL=info
+      - N8N_LOG_OUTPUT=file
+      - N8N_LOG_FILE_MAX_SIZE=10
+      - N8N_LOG_FILE_MAX_COUNT=7
+      # Pass Telegram bot token as env variable (used in Fetch File node)
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok_tunnel
+    restart: always
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command:
+      - "http"
+      - "n8n:5678"
+      - "--domain=${NGROK_DOMAIN}"
+      - "--inspect=false"
+    depends_on:
+      - n8n
+
+volumes:
+  n8n_data:

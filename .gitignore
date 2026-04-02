@@ -1,0 +1,56 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.production
+
+# n8n data directory (contains credentials and execution history)
+n8n_data/
+.n8n/
+
+# Docker volumes and runtime data
+volumes/
+data/
+
+# ngrok config
+ngrok.yml
+ngrok.log
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Audio files (could contain sensitive recordings)
+*.mp3
+*.ogg
+*.oga
+*.wav
+*.m4a
+*.flac
+*.opus
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Backup files
+*.bak
+*.backup
