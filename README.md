@@ -11,7 +11,7 @@
 **Automatically transcribe voice messages from Telegram to text using Groq Whisper AI.**  
 Supports any language — Persian, English, Italian, Arabic and more.
 
-[Features](#-features) • [Architecture](#-architecture) • [Prerequisites](#-prerequisites) • [Installation](#-installation) • [Usage](#-usage) • [Roadmap](#-roadmap)
+[Features](#-features) • [Architecture](#-architecture) • [Prerequisites](#-prerequisites) • [Installation](#-installation) • [Usage](#-usage)
 
 </div>
 
@@ -239,22 +239,6 @@ Telegram's Bot API limits file downloads to **20MB**. For longer voice messages,
 
 ---
 
-## 🗺️ Roadmap
-
-- [x] Basic voice to text transcription
-- [x] Multilingual support with auto language detection
-- [x] Long message splitting (>4000 chars)
-- [x] Self-hosted Docker deployment
-- [x] ngrok integration for webhook access
-- [ ] Noise reduction with FFmpeg before transcription
-- [ ] AI-powered text cleanup (fix errors from noisy audio)
-- [ ] Support for video files (extract audio track)
-- [ ] WhatsApp integration via Twilio
-- [ ] Support for audio files >20MB via Local Bot API
-- [ ] Speaker diarization (who said what)
-
----
-
 ## 🔒 Security Notes
 
 - **Never commit your `.env` file** — it is excluded via `.gitignore`
@@ -285,7 +269,7 @@ This project is licensed under the [MIT License](LICENSE) — free to use, modif
 
 **Built with ❤️ by [Ali Pornouri](https://github.com/ali-pornouri)**
 
-🇮🇷 Iranian developer based in 🇮🇹 Pisa, Italy
+🇮🇷 Iranian developer based in 🇮🇹 Italy
 
 ⭐ If this project helped you, please give it a star!
 
